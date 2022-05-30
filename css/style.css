@@ -11,13 +11,14 @@ body{
   font-family: 'Kumbh Sans', sans-serif;
 }
 
+/* --- cabecalho --- */
 #cabecalho{
-  border: 1px solid red;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 30px;
   margin-top: 3.875rem;
+  margin-bottom: 4rem;
 }
 #cabecalho h1{
   font-size: 3rem;
@@ -48,4 +49,62 @@ body{
   font-size: 1.125rem; 
   font-weight: 600;
   margin-left: 5px;
+}
+
+/* --- movies list --- */
+#movies-list{
+  max-width: 1224px;
+  margin: 0 auto;
+}
+.movie{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 30px 40px; 
+  box-shadow: 32.8387px 24.5482px 79px rgba(0, 0, 0, 0.15), 23.8851px 17.855px 53.2479px rgba(0, 0, 0, 0.121406), 16.6246px 12.4276px 34.4391px rgba(0, 0, 0, 0.10125), 10.9035px 8.15079px 21.3701px rgba(0, 0, 0, 0.0867188), 6.56775px 4.90965px 12.8375px rgba(0, 0, 0, 0.075), 3.46346px 2.58907px 7.6377px rgba(0, 0, 0, 0.0632813), 1.4367px 1.07399px 4.56719px rgba(0, 0, 0, 0.04875), 0.333519px 0.249318px 2.42246px rgba(0, 0, 0, 0.0285938);
+  border-radius: 8px;
+  margin-bottom: 3rem;
+}
+.movie .image img{
+  width: 139px;
+  height: 139px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.movie .title h3{
+  font-size: 1.125rem;
+  font-weight: 500;
+}
+.movie .title .rating-favorites{
+  display: flex;
+  align-items: center;
+  margin-top: 1.5rem;
+  gap: 2rem;
+}
+.movie .title .rating-favorites{
+  font-size: 1.125rem;
+  font-weight: 400;
+}
+.movie .title .rating-favorites img{
+  width: 16px;
+  margin-right: 8px;
+}
+.movie .title .rating-favorites .favorites{
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.movie .title .rating-favorites .favorites img{
+  transition: all .3s;
+  width: 1.2rem;
+}
+.movie .description{
+  width: 590px;
+}
+.movie .description p{
+  font-size: 1.125rem;
+  font-weight: 500;
+  text-align: justify;
+  margin-bottom: 0;
 }
