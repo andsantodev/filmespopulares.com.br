@@ -72,6 +72,9 @@ body{
   object-fit: cover;
   border-radius: 50%;
 }
+.movie .title{
+  width: 220px;
+}
 .movie .title h3{
   font-size: 1.125rem;
   font-weight: 500;
