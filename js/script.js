@@ -1,37 +1,50 @@
-// array movies
-const moviesAll = [
-  {
-    image: 'https://img.elo7.com.br/product/original/3FBA809/big-poster-filme-batman-2022-90x60-cm-lo002-poster-batman.jpg',
-    title: 'Batman',
-    rating: 9.2,
-    year: 2022,
-    description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-    isFavorited: false
-  },
-  {
-    image: 'https://upload.wikimedia.org/wikipedia/pt/thumb/9/9b/Avengers_Endgame.jpg/250px-Avengers_Endgame.jpg',
-    title: 'Avengers',
-    rating: 9.2,
-    year: 2019,
-    description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-    isFavorited: true
-  },
-  {
-    image: 'https://upload.wikimedia.org/wikipedia/en/1/17/Doctor_Strange_in_the_Multiverse_of_Madness_poster.jpg',
-    title: 'Doctor Strange',
-    rating: 9.2,
-    year: 2022,
-    description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-    isFavorited: false
-  },
-]
+// // array movies
+// const moviesAll = [
+//   {
+//     image: 'https://img.elo7.com.br/product/original/3FBA809/big-poster-filme-batman-2022-90x60-cm-lo002-poster-batman.jpg',
+//     title: 'Batman',
+//     rating: 9.2,
+//     year: 2022,
+//     description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
+//     isFavorited: false
+//   },
+//   {
+//     image: 'https://upload.wikimedia.org/wikipedia/pt/thumb/9/9b/Avengers_Endgame.jpg/250px-Avengers_Endgame.jpg',
+//     title: 'Avengers',
+//     rating: 9.2,
+//     year: 2019,
+//     description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
+//     isFavorited: true
+//   },
+//   {
+//     image: 'https://upload.wikimedia.org/wikipedia/en/1/17/Doctor_Strange_in_the_Multiverse_of_Madness_poster.jpg',
+//     title: 'Doctor Strange',
+//     rating: 9.2,
+//     year: 2022,
+//     description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
+//     isFavorited: false
+//   },
+// ]
 
-// id:movies-list
-const moviesList = document.querySelector('#movies-list')
+import apikey from "./apikey.js"
+
+async function getPopularMovies() {
+  const url = `https://api.themoviedb.org/3/movie/popular?api_key=${apikey}`
+  const response = await fetch(url)
+  const { results } = await response.json()
+  console.log(results)
+  return results
+}
+
+// load
+window.onload = async () => {
+  const movies = await getPopularMovies()
+  movies.forEach(movie => createMovie(movie))
+}
 
 // create movie
 const createMovie = (movie) =>{ 
-  const {title, image, rating, year, description, isFavorited} = movie
+  const {poster_path, title, release_date, vote_average, overview, isFavorited} = movie
 
   // movie
   const movieElement= document.createElement('div')
@@ -42,6 +55,7 @@ const createMovie = (movie) =>{
   const movieImage = document.createElement('div')
   movieImage.classList.add('image')
   
+  const image = `https://image.tmdb.org/t/p/w500${poster_path}`
   const imgSrc = document.createElement('img')
   imgSrc.setAttribute('src', image, 'alt', title)
   movieImage.appendChild(imgSrc)
@@ -51,6 +65,7 @@ const createMovie = (movie) =>{
   const movieTitle = document.createElement('div')
   movieTitle.classList.add('title')
   
+  const year = new Date(release_date).getFullYear()
   const h3 = document.createElement('h3')
   h3.textContent = `${title} (${year})`
   movieTitle.appendChild(h3)
@@ -67,7 +82,7 @@ const createMovie = (movie) =>{
   imgRatingElement.setAttribute('src', 'images/star.svg', 'alt', 'Rating')
 
   const valueRating = document.createElement('span')
-  valueRating.textContent = rating
+  valueRating.textContent = vote_average
 
   ratingElement.appendChild(imgRatingElement)
   ratingElement.appendChild(valueRating)
@@ -78,7 +93,7 @@ const createMovie = (movie) =>{
   favoritesElement.classList.add('favorites')
   
   const imgFavoritesElement = document.createElement('img')
-  imgFavoritesElement.setAttribute('src', isFavorited ? 'images/heart-2.svg' : 'images/heart.svg', 'alt', 'Favorites')
+  imgFavoritesElement.setAttribute('src', isFavorited ? 'images/heart-full.svg' : 'images/heart.svg', 'alt', 'Favorites')
 
   const titleFavorite = document.createElement('span')
   titleFavorite.textContent = "Favoritar"
@@ -95,14 +110,12 @@ const createMovie = (movie) =>{
   descriptionElement.classList.add('description')
 
   const tagP = document.createElement('p')
-  tagP.textContent = description
+  tagP.textContent = overview
 
   descriptionElement.appendChild(tagP)
   movieElement.appendChild(descriptionElement)
 }
 
-// load
-window.onload = () => {
-  moviesAll.forEach((movie) => createMovie(movie));
-}
+
+// getPopularMovies()
 
