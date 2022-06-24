@@ -28,11 +28,61 @@
 
 import apikey from "./apikey.js"
 
+const moviesList = document.querySelector('#movies-list')
+const input = document.querySelector('[name="search-movie"]')
+const searchButton = document.querySelector('.icon-search')
+
+const loading = document.querySelector('.loading')
+const error = document.querySelector('.erro')
+error.style.cssText = 'text-align:center;font-size:1.25rem'
+
+searchButton.addEventListener('click', searchMovie)
+
+input.addEventListener('keyup', function(event){
+  // console.log(event.key)
+  if (event.keyCode == 13) {
+    searchMovie()
+    return
+  }
+})
+
+async function searchMovie() {
+  const inputValue = input.value
+  let movies;
+  if (inputValue != '') {
+    cleanAllMovies()
+    movies = await getSearchMovie(inputValue)
+    movies.forEach(movie => createMovie(movie));
+  } else {
+    cleanAllMovies()
+    movies = await getPopularMovies()
+    movies.forEach(movie => createMovie(movie));
+  }
+}
+
+function cleanAllMovies() {
+  moviesList.innerHTML = ''
+}
+
+// api
 async function getPopularMovies() {
   const url = `https://api.themoviedb.org/3/movie/popular?api_key=${apikey}`
   const response = await fetch(url)
   const { results } = await response.json()
-  console.log(results)
+  loading.setAttribute('hidden', 'hidden')
+  if (response.status == 404) {
+    error.textContent = "Erro no carregamento"
+  }
+  return results
+}
+
+// search movie
+async function getSearchMovie(title) {
+  const url = `https://api.themoviedb.org/3/search/movie?api_key=${apikey}&query=${title}`
+  const response = await fetch(url)
+  const { results } = await response.json()
+  // loading.setAttribute('hidden', 'hidden')
+  // console.table(results) 
   return results
 }
 
@@ -49,7 +99,7 @@ const createMovie = (movie) =>{
   // movie
   const movieElement= document.createElement('div')
   movieElement.classList.add('movie')
-  document.querySelector('#movies-list').appendChild(movieElement)
+  moviesList.appendChild(movieElement)
 
   // movie image
   const movieImage = document.createElement('div')
@@ -115,7 +165,3 @@ const createMovie = (movie) =>{
   descriptionElement.appendChild(tagP)
   movieElement.appendChild(descriptionElement)
 }
-
-
-// getPopularMovies()
-

@@ -56,6 +56,10 @@ body{
   max-width: 1224px;
   margin: 0 auto;
 }
+.loading{
+  text-align: center;
+  font-size: 1.25rem;
+}
 .movie{
   display: flex;
   flex-direction: row;
