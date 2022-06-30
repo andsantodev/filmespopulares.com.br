@@ -5,6 +5,6 @@ Consumindo a API de filmes do 'The Movie DataBase' e criando uma página HTML de
 ![image project](https://github.com/andsantodev/filmespopulares.com.br/blob/master/images/filmes-populares.png)
 
 Referência: <br>
-JavaScript e DOM - API
-https://7daysofcode.io/matricula/javascript-e-dom-api
+JavaScript e DOM - API <br>
+https://7daysofcode.io/matricula/javascript-e-dom-api <br>
 #7DaysOfCode
