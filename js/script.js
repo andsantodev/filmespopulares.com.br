@@ -46,6 +46,7 @@ input.addEventListener('keyup', function(event){
   }
 })
 
+// search movie
 async function searchMovie() {
   const inputValue = input.value
   let movies;
@@ -60,6 +61,7 @@ async function searchMovie() {
   }
 }
 
+// clean movies
 function cleanAllMovies() {
   moviesList.innerHTML = ''
 }
@@ -74,6 +76,48 @@ async function getPopularMovies() {
     error.textContent = "Erro no carregamento"
   }
   return results
+}
+
+// button favorite movie
+function favoriteButtonPressed(event, movie) {
+  const favoriteState = {
+    favorited: 'images/heart-full.svg',
+    notFavorited: 'images/heart.svg'
+  }
+  if (event.target.src.includes(favoriteState.notFavorited)) {
+    event.target.src = favoriteState.favorited
+    saveToLocalStorage(movie)
+  } else {
+    event.target.src = favoriteState.notFavorited
+    removeFromLocalStorage(movie.id)
+  }
+}
+
+// get favorites
+function getFavoriteMovies() {
+  return JSON.parse(localStorage.getItem('favoriteMovies'))
+}
+
+// save local storage
+function saveToLocalStorage(movie) {
+  const movies = getFavoriteMovies() || []
+  movies.push(movie)
+  const movieJSON = JSON.stringify(movies)
+  localStorage.setItem('favoriteMovies', movieJSON)
+}
+
+// check movie
+function checkMovieIsFavorited(id) {
+  const movies = getFavoriteMovies() || []
+  return movies.find(movie => movie.id == id)
+}
+
+// remove local storage
+function removeFromLocalStorage(id) {
+  const movies = getFavoriteMovies() || []
+  const findMovie = movies.find(movie => movie.id == id)
+  const newMovies = movies.filter(movie => movie.id != findMovie.id)
+  localStorage.setItem('favoriteMovies', JSON.stringify(newMovies))
 }
 
 // search movie
@@ -94,7 +138,8 @@ window.onload = async () => {
 
 // create movie
 const createMovie = (movie) =>{ 
-  const {poster_path, title, release_date, vote_average, overview, isFavorited} = movie
+  const {id, poster_path, title, release_date, vote_average, overview} = movie
+  const isFavorited = checkMovieIsFavorited(id)
 
   // movie
   const movieElement= document.createElement('div')
@@ -144,6 +189,10 @@ const createMovie = (movie) =>{
   
   const imgFavoritesElement = document.createElement('img')
   imgFavoritesElement.setAttribute('src', isFavorited ? 'images/heart-full.svg' : 'images/heart.svg', 'alt', 'Favorites')
+  imgFavoritesElement.classList.add('favoriteImage')
+  imgFavoritesElement.addEventListener('click', (event) => {
+    favoriteButtonPressed(event, movie)
+  })
 
   const titleFavorite = document.createElement('span')
   titleFavorite.textContent = "Favoritar"
