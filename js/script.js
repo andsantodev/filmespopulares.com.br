@@ -1,42 +1,10 @@
-// // array movies
-// const moviesAll = [
-//   {
-//     image: 'https://img.elo7.com.br/product/original/3FBA809/big-poster-filme-batman-2022-90x60-cm-lo002-poster-batman.jpg',
-//     title: 'Batman',
-//     rating: 9.2,
-//     year: 2022,
-//     description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-//     isFavorited: false
-//   },
-//   {
-//     image: 'https://upload.wikimedia.org/wikipedia/pt/thumb/9/9b/Avengers_Endgame.jpg/250px-Avengers_Endgame.jpg',
-//     title: 'Avengers',
-//     rating: 9.2,
-//     year: 2019,
-//     description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-//     isFavorited: true
-//   },
-//   {
-//     image: 'https://upload.wikimedia.org/wikipedia/en/1/17/Doctor_Strange_in_the_Multiverse_of_Madness_poster.jpg',
-//     title: 'Doctor Strange',
-//     rating: 9.2,
-//     year: 2022,
-//     description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-//     isFavorited: false
-//   },
-// ]
-
-import apikey from "./apikey.js"
+import { API } from "../services/api.js"
+import { LocalStorage } from "../services/localStorage.js"
 
 const moviesList = document.querySelector('#movies-list')
 const input = document.querySelector('[name="search-movie"]')
 const searchButton = document.querySelector('.icon-search')
 const checkboxInput = document.querySelector('input[type="checkbox"]')
-
-const loading = document.querySelector('.loading')
-const error = document.querySelector('.erro')
-error.style.cssText = 'text-align:center;font-size:1.25rem'
-
 checkboxInput.addEventListener('change', checkCheckboxStatus)
 searchButton.addEventListener('click', searchMovie)
 
@@ -52,7 +20,7 @@ function checkCheckboxStatus() {
   const isChecked = checkboxInput.checked
   if (isChecked) {
     cleanAllMovies()
-    const movies = getFavoriteMovies() || []
+    const movies = LocalStorage.getFavoriteMovies() || []
     movies.forEach(movie => createMovie(movie))
   } else {
     cleanAllMovies()
@@ -66,7 +34,7 @@ async function searchMovie() {
   let movies;
   if (inputValue != '') {
     cleanAllMovies()
-    movies = await getSearchMovie(inputValue)
+    movies = await API.getSearchMovie(inputValue)
     movies.forEach(movie => createMovie(movie));
   } else {
     cleanAllMovies()
@@ -80,18 +48,6 @@ function cleanAllMovies() {
   moviesList.innerHTML = ''
 }
 
-// api
-async function getPopularMovies() {
-  const url = `https://api.themoviedb.org/3/movie/popular?api_key=${apikey}`
-  const response = await fetch(url)
-  const { results } = await response.json()
-  loading.setAttribute('hidden', 'hidden')
-  if (response.status == 404) {
-    error.textContent = "Erro no carregamento"
-  }
-  return results
-}
-
 // button favorite movie
 function favoriteButtonPressed(event, movie) {
   const favoriteState = {
@@ -100,54 +56,17 @@ function favoriteButtonPressed(event, movie) {
   }
   if (event.target.src.includes(favoriteState.notFavorited)) {
     event.target.src = favoriteState.favorited
-    saveToLocalStorage(movie)
+    LocalStorage.saveToLocalStorage(movie)
   } else {
     event.target.src = favoriteState.notFavorited
-    removeFromLocalStorage(movie.id)
+    LocalStorage.removeFromLocalStorage(movie.id)
   }
-}
-
-// get favorites
-function getFavoriteMovies() {
-  return JSON.parse(localStorage.getItem('favoriteMovies'))
-}
-
-// save local storage
-function saveToLocalStorage(movie) {
-  const movies = getFavoriteMovies() || []
-  movies.push(movie)
-  const movieJSON = JSON.stringify(movies)
-  localStorage.setItem('favoriteMovies', movieJSON)
-}
-
-// check movie
-function checkMovieIsFavorited(id) {
-  const movies = getFavoriteMovies() || []
-  return movies.find(movie => movie.id == id)
-}
-
-// remove local storage
-function removeFromLocalStorage(id) {
-  const movies = getFavoriteMovies() || []
-  const findMovie = movies.find(movie => movie.id == id)
-  const newMovies = movies.filter(movie => movie.id != findMovie.id)
-  localStorage.setItem('favoriteMovies', JSON.stringify(newMovies))
 }
 
 // all movies
 async function getAllPopularMovies() {
-  const movies = await getPopularMovies()
+  const movies = await API.getPopularMovies()
   movies.forEach(movie => createMovie(movie))
-}
-
-// search movie
-async function getSearchMovie(title) {
-  const url = `https://api.themoviedb.org/3/search/movie?api_key=${apikey}&query=${title}`
-  const response = await fetch(url)
-  const { results } = await response.json()
-  // loading.setAttribute('hidden', 'hidden')
-  // console.table(results) 
-  return results
 }
 
 // load
@@ -158,7 +77,7 @@ window.onload = function () {
 // create movie
 const createMovie = (movie) =>{ 
   const {id, poster_path, title, release_date, vote_average, overview} = movie
-  const isFavorited = checkMovieIsFavorited(id)
+  const isFavorited = LocalStorage.checkMovieIsFavorited(id)
 
   // movie
   const movieElement= document.createElement('div')
