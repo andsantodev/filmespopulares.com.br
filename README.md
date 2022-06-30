@@ -2,7 +2,7 @@
 
 Consumindo a API de filmes do 'The Movie DataBase' e criando uma página HTML de exibição.
 
-![image project](https://github.com/andsantodev/filmespopulares.com.br/tree/master/images/filmes-populares.png)
+![image project](https://github.com/andsantodev/filmespopulares.com.br/blob/master/images/filmes-populares.png)
 
 Referência: <br>
 JavaScript e DOM - API
