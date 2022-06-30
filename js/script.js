@@ -31,20 +31,34 @@ import apikey from "./apikey.js"
 const moviesList = document.querySelector('#movies-list')
 const input = document.querySelector('[name="search-movie"]')
 const searchButton = document.querySelector('.icon-search')
+const checkboxInput = document.querySelector('input[type="checkbox"]')
 
 const loading = document.querySelector('.loading')
 const error = document.querySelector('.erro')
 error.style.cssText = 'text-align:center;font-size:1.25rem'
 
+checkboxInput.addEventListener('change', checkCheckboxStatus)
 searchButton.addEventListener('click', searchMovie)
 
 input.addEventListener('keyup', function(event){
-  // console.log(event.key)
   if (event.keyCode == 13) {
     searchMovie()
     return
   }
 })
+
+// checkbox status
+function checkCheckboxStatus() {
+  const isChecked = checkboxInput.checked
+  if (isChecked) {
+    cleanAllMovies()
+    const movies = getFavoriteMovies() || []
+    movies.forEach(movie => createMovie(movie))
+  } else {
+    cleanAllMovies()
+    getAllPopularMovies()
+  }
+}
 
 // search movie
 async function searchMovie() {
@@ -120,6 +134,12 @@ function removeFromLocalStorage(id) {
   localStorage.setItem('favoriteMovies', JSON.stringify(newMovies))
 }
 
+// all movies
+async function getAllPopularMovies() {
+  const movies = await getPopularMovies()
+  movies.forEach(movie => createMovie(movie))
+}
+
 // search movie
 async function getSearchMovie(title) {
   const url = `https://api.themoviedb.org/3/search/movie?api_key=${apikey}&query=${title}`
@@ -131,9 +151,8 @@ async function getSearchMovie(title) {
 }
 
 // load
-window.onload = async () => {
-  const movies = await getPopularMovies()
-  movies.forEach(movie => createMovie(movie))
+window.onload = function () {
+  getAllPopularMovies()
 }
 
 // create movie
